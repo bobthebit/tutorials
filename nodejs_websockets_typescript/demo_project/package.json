@@ -1,0 +1,23 @@
+{
+  "name": "nodejs_express_typescript",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "start": "node --inspect=5858 -r ts-node/register ./src/server.ts",
+    "start:watch": "nodemon",
+    "build": "tsc"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "ws": "^7.2.5"
+  },
+  "devDependencies": {
+    "@types/ws": "^7.2.4",
+    "nodemon": "^2.0.3",
+    "ts-node": "^8.10.1",
+    "typescript": "^3.8.3"
+  },
+  "keywords": [],
+  "description": ""
+}
