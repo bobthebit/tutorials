@@ -10,6 +10,7 @@ Knowledge sources
 * https://webpack.js.org/guides/typescript/
 * https://webpack.js.org/concepts/
 * https://webpack.js.org/api/module-methods/
+* https://decembersoft.com/posts/say-goodbye-to-relative-paths-in-typescript-imports/
 
 Init project & install webpack dependencies
 
@@ -238,5 +239,32 @@ Import and use the class in `index.ts`
   console.log('Hello from script');
 + const c = new MyClass('Bob');
 + c.greet();
+```
+
+If you want simpler include paths (so no more ../../../something), extend your `tsconfig.json`
+
+```json
+"baseUrl": "src",
+"paths": {
+    "_something/*": [ "app/stuff/other-stuff/something/*" ],
+    ...
+}
+```
+
+:bulb: You could use '_' to make clear, that this a path mapping and not an actual path. Typically you would use '@', but this does not work with the alias configuration of `webpack` (see below).
+
+Also add aliases to the `resolve` section of `webpack.config.js` file, as typescript does not translate the paths in the transpiled `.js` code:
+
+```js
+module.exports = {
+    ...
+    resolve: {
+        ...
+        alias: {
+            _something: path.join(__dirname, 'src', 'app/stuff/other-stuff/something'),
+        	...
+        },
+        ...
+    },
 ```
 

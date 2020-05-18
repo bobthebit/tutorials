@@ -15,6 +15,9 @@ module.exports = {
   },
   resolve: {
     extensions: [ '.tsx', '.ts', '.js' ],
+    alias: {
+      _deep: path.join(__dirname, 'src', 'aDeep/folder/structure'),
+    }
   },
   output: {
     filename: 'main.js',
