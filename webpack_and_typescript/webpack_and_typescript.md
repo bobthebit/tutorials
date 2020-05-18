@@ -244,11 +244,16 @@ Import and use the class in `index.ts`
 If you want simpler include paths (so no more ../../../something), extend your `tsconfig.json`
 
 ```json
-"baseUrl": "src",
-"paths": {
-    "_something/*": [ "app/stuff/other-stuff/something/*" ],
+...
+"compilerOptions": {
     ...
+    "baseUrl": "src",
+	"paths": {
+    	"_something/*": [ "app/stuff/other-stuff/something/*" ],
+    ...
+	}
 }
+
 ```
 
 :bulb: You could use '_' to make clear, that this a path mapping and not an actual path. Typically you would use '@', but this does not work with the alias configuration of `webpack` (see below).
