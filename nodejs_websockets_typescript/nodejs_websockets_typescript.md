@@ -7,6 +7,7 @@ Knowledge sources
 * https://levelup.gitconnected.com/getting-started-with-node-js-and-websockets-f22dd0452105
 * https://medium.com/create-a-server-with-nodemon-express-typescript/create-a-server-with-nodemon-express-typescript-f7c88fb5ee71
 * https://medium.com/factory-mind/websocket-node-js-express-step-by-step-using-typescript-725114ad5fe4
+* https://dev.to/larswaechter/path-aliases-with-typescript-in-nodejs-4353
 
 Create a folder, navigate there. Then init project & install ws (Websockets) library:
 
@@ -33,7 +34,7 @@ add a minimal typescript configuration file `tsconfig.json`:
 {
     "compilerOptions": {
         "target": "es6",
-        "module": "es5",
+        "module": "commonjs",
         "outDir": "./dist/server",
         "strict": true,
         "sourceMap": true,
@@ -106,3 +107,59 @@ add `nodemon.json` configuration file. Using this, `nodemon` will watch for chan
 ```
 
 You can now run your server (e.g. with `npm run start:watch` if you want to reload the application if files change). A quick way to test the server, without implementing client code, is using a chrome extension. You could use WebSocket King, which allows to start multiple websocket clients. If you connect to `ws://127.0.0.1:3030`, you will a console output that shows the number of connected clients.
+
+If you want to use more expressive include paths (instead of ../../..) you can use aliases.
+
+extend your `tsconfig.json`
+
+```json
+...
+"compilerOptions": {
+    ...
+    "baseUrl": "src",
+	"paths": {
+    	"@something/*": [ "app/stuff/other-stuff/something/*" ],
+    ...
+	}
+}
+
+```
+
+:bulb: You could use '@' to make clear, that this a path mapping and not an actual path.
+
+To make this work with your dev setup, we need to register an additional loader for resolving the path when using `ts-node`:
+
+```bash
+npm i tsconfig-paths -D
+```
+
+and use it when starting our project (`package.json`): 
+
+```diff
+- "start": "node --inspect=5858 -r ts-node/register ./src/server.ts"
++ "start": "node --inspect=5858 -r tsconfig-paths/register -r ts-node/register ./src/server.ts"
+```
+
+To be able to actually build the project, we need to add yet another resolving mechanisms, as path aliases are note resolved in the transpiled js code.
+
+```bash
+npm i module-alias --save
+```
+
+Define the path alias in the `package.json`
+
+```json
+...
+"_moduleAliases": {
+	"@something": "dist/server/app/stuff/other-stuff/something"
+}
+```
+
+and make sure, you refer to the correct location in your `dist` folder. (defined as `outDir` in `tsconfig.json` - see above).
+
+Finally (yes, alias paths are initially a lot of work, but will spare you a lot of ../../. ? .. confusion in the long run), include the `module-alias` module in the top-most file of your project (e.g. `server.ts`)
+
+```typescript
+import 'module-alias/register';
+```
+
